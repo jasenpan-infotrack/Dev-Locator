@@ -6,9 +6,8 @@ import './main.css';
 import imgSrc from '../static/media/dev_map.png';
 
 function getQueryString (name, specialty) {
-  let queryString;
-  if (name) return `?name=${name}`;
-  if (specialty) return `?specialty=${specialty}`;
+  if (name) return `?name=${name.toLowerCase()}`;
+  if (specialty) return `?specialty=${specialty.toLowerCase()}`;
   return '';
 }
 
@@ -80,7 +79,9 @@ class App extends Component {
   changePage(newPage) {
     this.setState({
       page: newPage,
-      searchResult: null
+      searchResult: null,
+      name: '',
+      specialty: ''
     });
   }
 
@@ -88,10 +89,7 @@ class App extends Component {
     e.preventDefault();
     if (this.state.page === 'search') {
       const qs = getQueryString(this.state.name, this.state.specialty);
-      // let queryString;
-      // if (this.state.name) {
-      //   queryString = `?name=${this.state.name}`;
-      // }
+
       axios.get(`${API_BASE}/dev${qs}`)
         .then(res => {
           const len = res.data.length;
@@ -111,9 +109,13 @@ class App extends Component {
 
       });
     } else if (this.state.page === 'set') {
-      axios.post(`${API_BASE}/dev`, { name: this.state.name, x: this.state.bubblePositionX, y: this.state.bubblePositionY })
-        .then(res => {
-
+      axios.post(`${API_BASE}/dev`, {
+        name: this.state.name,
+        x: this.state.bubblePositionX,
+        y: this.state.bubblePositionY,
+        specialty: this.state.specialty.split(",").map(spe => spe.toLowerCase().trim())
+      }).then(res => {
+        console.log(res)
       });
     }
 
@@ -142,7 +144,7 @@ class App extends Component {
               <input type="text" className="form-control"
                 value={this.state.name}
                 onChange={this.changeName.bind(this)}
-                onFocus={() => { this.setState({ specialty: '' })}}
+                onFocus={() => {this.state.page === 'search' && this.setState({ specialty: '' })}}
                 placeholder="Name" name="devname"
               />
             </div>
@@ -151,7 +153,7 @@ class App extends Component {
               <input type="text" className="form-control"
                 value={this.state.specialty}
                 onChange={this.addSpecialty.bind(this)}
-                onFocus={() => {this.setState({ name: '' })}}
+                onFocus={() => {this.state.page === 'search' && this.setState({ name: '' })}}
                 placeholder="Specialty"
               />
             </div>

@@ -17,11 +17,8 @@ Dev.addOrUpdateDev = function (dev, callback) {
       if(error) throw error;
 
       if(!devInDb) {
-          const newDev = new Dev();
-          newDev.name = dev.name;
-          newDev.x = dev.x;
-          newDev.y = dev.y;
-
+          const newDev = new Dev(dev);
+          
           newDev.save(function(error) {
             if (error) throw error;
             return callback({ description: "created" });
