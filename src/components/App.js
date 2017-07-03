@@ -5,6 +5,13 @@ import './main.css';
 
 import imgSrc from '../static/media/dev_map.png';
 
+function getQueryString (name, specialty) {
+  let queryString;
+  if (name) return `?name=${name}`;
+  if (specialty) return `?specialty=${specialty}`;
+  return '';
+}
+
 function FindPosition(oElement)
 {
   if(typeof( oElement.offsetParent ) !== "undefined")
@@ -31,6 +38,7 @@ class App extends Component {
       searchResult: null,
       notFound: false,
       name: '',
+      specialty: '',
       bubblePositionX: 0,
       bubblePositionY: 0
     };
@@ -79,18 +87,28 @@ class App extends Component {
   submitForm(e) {
     e.preventDefault();
     if (this.state.page === 'search') {
-      axios.get(`${API_BASE}/dev?name=${this.state.name}`)
+      const qs = getQueryString(this.state.name, this.state.specialty);
+      // let queryString;
+      // if (this.state.name) {
+      //   queryString = `?name=${this.state.name}`;
+      // }
+      axios.get(`${API_BASE}/dev${qs}`)
         .then(res => {
-          if (res.data.length < 1) {
+          const len = res.data.length;
+          if (len === 0) { // 0 result
             return this.setState({
               notFound: true
             });
+          } else if (len === 1) { // single result
+            this.setState({
+              searchResult: res.data,
+              bubblePositionX: res.data[0].x,
+              bubblePositionY: res.data[0].y
+            });
+          }else { // multiple results
+            throw "Not Implemented";
           }
-          this.setState({
-            searchResult: res.data,
-            bubblePositionX: res.data[0].x,
-            bubblePositionY: res.data[0].y
-          });
+
       });
     } else if (this.state.page === 'set') {
       axios.post(`${API_BASE}/dev`, { name: this.state.name, x: this.state.bubblePositionX, y: this.state.bubblePositionY })
@@ -108,13 +126,34 @@ class App extends Component {
     });
   }
 
+  addSpecialty(e) {
+    this.setState({
+      specialty: e.target.value,
+      searchResult: null
+    });
+  }
+
   renderForm() {
     return (
         <div className="col-md-3">
           <form onSubmit={this.submitForm.bind(this)}>
             <div className="form-group">
-              <label for="exampleInputEmail1">Dev Name</label>
-              <input type="text" className="form-control" onChange={this.changeName.bind(this)} placeholder="Name" />
+              <label htmlFor="devname">Dev Name</label>
+              <input type="text" className="form-control"
+                value={this.state.name}
+                onChange={this.changeName.bind(this)}
+                onFocus={() => { this.setState({ specialty: '' })}}
+                placeholder="Name" name="devname"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="devspecialty">Specialty</label>
+              <input type="text" className="form-control"
+                value={this.state.specialty}
+                onChange={this.addSpecialty.bind(this)}
+                onFocus={() => {this.setState({ name: '' })}}
+                placeholder="Specialty"
+              />
             </div>
           <button type="submit" className="btn btn-default">Submit</button>
         </form>
@@ -143,8 +182,12 @@ class App extends Component {
     return (
       <div>
         <ul className="nav nav-tabs">
-          <li role="presentation" onClick={this.changePage.bind(this, 'search')} className="active"><a href="#">Find Dev</a></li>
-          <li role="presentation" onClick={this.changePage.bind(this, 'set')}><a href="#">Set my location</a></li>
+          <li role="presentation" onClick={this.changePage.bind(this, 'search')}
+            className={this.state.page === 'search' && 'active'}
+          ><a href="#">Find Dev</a></li>
+          <li role="presentation" onClick={this.changePage.bind(this, 'set')}
+            className={this.state.page === 'set' && 'active'}
+          ><a href="#">Set my location</a></li>
         </ul>
         <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
           {this.renderForm()}
