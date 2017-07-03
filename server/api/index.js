@@ -20,6 +20,11 @@ router.get("/dev/:_id", (req, res) => {
 
 router.get("/dev", (req, res) => {
     const name = req.query.name;
+    const specialty = req.query.specialty;
+    if (!name) {
+      return Dev.getDevBySpecialty(specialty, result => { res.send(result) });
+    }
+
     Dev.getDevByName(name, (result) => {
         res.send(result);
     });
@@ -27,7 +32,7 @@ router.get("/dev", (req, res) => {
 
 router.post("/dev", (req, res) => {
     const newDev = req.body;
-    Dev.addDev(newDev, (result) => {
+    Dev.addOrUpdateDev(newDev, (result) => {
         res.send(result);
     });
 });

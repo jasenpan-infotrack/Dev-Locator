@@ -77,7 +77,6 @@ class App extends Component {
   }
 
   submitForm(e) {
-    debugger;
     e.preventDefault();
     if (this.state.page === 'search') {
       axios.get(`${API_BASE}/dev?name=${this.state.name}`)
@@ -94,13 +93,12 @@ class App extends Component {
           });
       });
     } else if (this.state.page === 'set') {
-      debugger;
       axios.post(`${API_BASE}/dev`, { name: this.state.name, x: this.state.bubblePositionX, y: this.state.bubblePositionY })
         .then(res => {
 
       });
     }
-    
+
   }
 
   changeName(e) {
@@ -138,7 +136,7 @@ class App extends Component {
     }
     return null;
   }
-  
+
   // <li role="presentation" onClick={this.changePage.bind(this, 'skills')}><a href="#">Search by skills</a></li>
 
   render() {
@@ -155,7 +153,7 @@ class App extends Component {
             <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
           </div>
         </div>
-        
+
       </div>
     );
   }
