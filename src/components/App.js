@@ -5,6 +5,8 @@ import './main.css';
 
 import imgSrc from '../static/media/dev_map.png';
 
+import Rating from 'react-rating';
+
 function getQueryString (name, specialty) {
   if (name) return `?name=${name.toLowerCase()}`;
   if (specialty) return `?specialty=${specialty.toLowerCase()}`;
@@ -128,6 +130,10 @@ class App extends Component {
     });
   }
 
+  onClickRating(rate, e) {
+    console.log(rate);
+  }
+
   addSpecialty(e) {
     this.setState({
       specialty: e.target.value,
@@ -137,29 +143,37 @@ class App extends Component {
 
   renderForm() {
     return (
-        <div className="col-md-3">
-          <form onSubmit={this.submitForm.bind(this)}>
-            <div className="form-group">
-              <label htmlFor="devname">Dev Name</label>
-              <input type="text" className="form-control"
-                value={this.state.name}
-                onChange={this.changeName.bind(this)}
-                onFocus={() => {this.state.page === 'search' && this.setState({ specialty: '' })}}
-                placeholder="Name" name="devname"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="devspecialty">Specialty</label>
-              <input type="text" className="form-control"
-                value={this.state.specialty}
-                onChange={this.addSpecialty.bind(this)}
-                onFocus={() => {this.state.page === 'search' && this.setState({ name: '' })}}
-                placeholder="Specialty"
-              />
-            </div>
-          <button type="submit" className="btn btn-default">Submit</button>
-        </form>
-      </div>);
+      <form onSubmit={this.submitForm.bind(this)}>
+        <div className="form-group">
+          <label htmlFor="devname">Dev Name</label>
+          <input type="text" className="form-control"
+            value={this.state.name}
+            onChange={this.changeName.bind(this)}
+            onFocus={() => {this.state.page === 'search' && this.setState({ specialty: '' })}}
+            placeholder="Name" name="devname"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="devspecialty">Specialty</label>
+          <input type="text" className="form-control"
+            value={this.state.specialty}
+            onChange={this.addSpecialty.bind(this)}
+            onFocus={() => {this.state.page === 'search' && this.setState({ name: '' })}}
+            placeholder="Specialty"
+          />
+        </div>
+        <button type="submit" className="btn btn-default">Submit</button>
+      </form>);
+  }
+
+  renderRating() {
+    return (
+      <Rating
+        empty="fa fa-star-o fa-2x ratingStar"
+        full="fa fa-star fa-2x ratingStar"
+        fractions={2}
+        onClick={this.onClickRating}
+      />);
   }
 
   renderBubble() {
@@ -192,7 +206,14 @@ class App extends Component {
           ><a href="#">Set my location</a></li>
         </ul>
         <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
-          {this.renderForm()}
+          <div className="col-md-3">
+            <div className="row">
+              {this.renderForm()}
+            </div>
+            <div className="row">
+              {this.renderRating()}
+            </div>
+          </div>
           <div className="col-md-9 devMap">
             {this.renderBubble()}
             <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
