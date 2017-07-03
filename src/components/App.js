@@ -4,7 +4,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        React Index
+        Hello react ...
       </div>
     );
   }
