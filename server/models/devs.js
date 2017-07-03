@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 
 var devSchema = Schema({
     name: String,
@@ -13,8 +12,23 @@ var devSchema = Schema({
 var Dev = mongoose.model('Dev', devSchema);
 
 Dev.addDev = function (dev, callback) {
-    const newDev = new Dev(dev);
-    newDev.save(callback);
+    // Dev.findOneAndUpdate({ name: dev.name }, dev, function(err, result) {
+    //     if()
+    // })
+    Dev.find({ "name": dev.name })
+        .then((result, err) => {
+            if(err) throw err;
+
+            if(!result) {
+                const newDev = new Dev(dev);
+                newDev.save(callback);
+            } else {
+                Dev.findByIdAndUpdate(result[0]._id, dev, function(err, numberAffected, rawResponse) {
+                    if(err) throw err;
+                    return callback({rawResponse, numberAffected});
+                });
+            }
+        })
 };
 
 Dev.getDevById = function (_id, callback) {
