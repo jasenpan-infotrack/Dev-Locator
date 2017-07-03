@@ -3,9 +3,11 @@ import axios from 'axios';
 import { API_BASE } from '../constants';
 import './main.css';
 
+import imgSrc from '../static/media/dev_map.png';
+
 function FindPosition(oElement)
 {
-  if(typeof( oElement.offsetParent ) != "undefined")
+  if(typeof( oElement.offsetParent ) !== "undefined")
   {
     for(var posX = 0, posY = 0; oElement; oElement = oElement.offsetParent)
     {
@@ -113,7 +115,7 @@ class App extends Component {
           {this.renderForm()}
           <div className="col-md-9 devMap">
             {this.renderBubble()}
-            <img src={'/static/media/dev_map.png'} onClick={e => this.handleClick(e)} alt="test" />
+            <img src={imgSrc} onClick={e => this.handleClick(e)} alt="test" />
           </div>
         </div>
         
