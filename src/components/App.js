@@ -29,12 +29,18 @@ class App extends Component {
     this.state = {
       page: 'search',
       searchResult: null,
+      notFound: false,
+      name: '',
       bubblePositionX: 0,
       bubblePositionY: 0
     };
   }
 
   handleClick(e) {
+
+    if (this.state.page !== 'set') {
+      return;
+    }
 
     const myImg = e.target;
 
@@ -64,52 +70,83 @@ class App extends Component {
   }
 
   changePage(newPage) {
-    this.setState({ page: newPage });
+    this.setState({
+      page: newPage,
+      searchResult: null
+    });
   }
 
-  submitForm() {
-    axios.get(`${API_BASE}/search`)
-    .then(res => {
-      this.setState({ searchResult: res.searchResult });
-    })
+  submitForm(e) {
+    debugger;
+    e.preventDefault();
+    if (this.state.page === 'search') {
+      axios.get(`${API_BASE}/dev?name=${this.state.name}`)
+        .then(res => {
+          if (res.data.length < 1) {
+            return this.setState({
+              notFound: true
+            });
+          }
+          this.setState({
+            searchResult: res.data,
+            bubblePositionX: res.data[0].x,
+            bubblePositionY: res.data[0].y
+          });
+      });
+    } else if (this.state.page === 'set') {
+      debugger;
+      axios.post(`${API_BASE}/dev`, { name: this.state.name, x: this.state.bubblePositionX, y: this.state.bubblePositionY })
+        .then(res => {
+
+      });
+    }
+    
+  }
+
+  changeName(e) {
+    this.setState({
+      name: e.target.value,
+      searchResult: null
+    });
   }
 
   renderForm() {
-    if (this.state.page === 'search') {
-      return (
+    return (
         <div className="col-md-3">
-          <form>
+          <form onSubmit={this.submitForm.bind(this)}>
             <div className="form-group">
               <label for="exampleInputEmail1">Dev Name</label>
-              <input type="text" className="form-control" placeholder="Name" />
+              <input type="text" className="form-control" onChange={this.changeName.bind(this)} placeholder="Name" />
             </div>
           <button type="submit" className="btn btn-default">Submit</button>
         </form>
       </div>);
-    }
-    return null;
   }
 
   renderBubble() {
     const x = this.state.bubblePositionX;
     const y = this.state.bubblePositionY;
-    if (this.state.bubblePositionX !== 0) {
+    if (this.state.page === 'set' || this.state.searchResult !== null) {
       return (
       <div className="bubbleContainer" style={{ left: x, top: y }}>
-        <div className="bubble"></div>
+        <div className="bubble">
+          <div className="text-center" style={{marginTop:"10px", fontSize: "1.5em"}}>
+            {this.state.searchResult ? `${this.state.searchResult[0].name} is here!` : null}
+          </div>
+        </div>
       </div>);
     }
     return null;
   }
   
+  // <li role="presentation" onClick={this.changePage.bind(this, 'skills')}><a href="#">Search by skills</a></li>
 
   render() {
     return (
       <div>
         <ul className="nav nav-tabs">
           <li role="presentation" onClick={this.changePage.bind(this, 'search')} className="active"><a href="#">Find Dev</a></li>
-          <li role="presentation" onClick={this.changePage.bind(this, 'skills')}><a href="#">Search by skills</a></li>
-          <li role="presentation"><a href="#">Set my position</a></li>
+          <li role="presentation" onClick={this.changePage.bind(this, 'set')}><a href="#">Set my location</a></li>
         </ul>
         <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
           {this.renderForm()}

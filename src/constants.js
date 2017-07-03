@@ -1,1 +1,1 @@
-export const API_BASE = 'localhost:5000';
+export const API_BASE = 'http://localhost:8080/api';
