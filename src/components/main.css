@@ -1,0 +1,59 @@
+.bubble 
+{
+position: relative;
+width: 205px;
+height: 70px;
+padding: 0px;
+background: #FFFFFF;
+-webkit-border-radius: 26px;
+-moz-border-radius: 26px;
+border-radius: 26px;
+border: #ff0000 solid 3px;
+}
+
+.bubble:after 
+{
+content: '';
+position: absolute;
+border-style: solid;
+border-width: 25px 7px 0;
+border-color: #FFFFFF transparent;
+display: block;
+width: 0;
+z-index: 1;
+bottom: -25px;
+left: 28px;
+}
+
+.bubble:before 
+{
+content: '';
+position: absolute;
+border-style: solid;
+border-width: 27px 9px 0;
+border-color: #ff0000 transparent;
+display: block;
+width: 0;
+z-index: 0;
+bottom: -30px;
+left: 26px;
+}
+
+.bubbleContainer
+{
+  position: absolute;
+  float: left;
+  display: inline-block;
+}
+
+.formContainer
+{
+  margin-top: 10px;
+  float: left;
+  display: inline-block;
+}
+
+.devMap
+{
+  margin-top: 20px
+}
