@@ -58,8 +58,8 @@ class App extends Component {
     PosX = PosX - ImgPos[0];
     PosY = PosY - ImgPos[1];
     this.setState({
-      bubblePositionX: PosX - 36,
-      bubblePositionY: PosY + 14
+      bubblePositionX: PosX - 25,
+      bubblePositionY: PosY - 90
     });
   }
 
@@ -111,11 +111,11 @@ class App extends Component {
           <li role="presentation" onClick={this.changePage.bind(this, 'skills')}><a href="#">Search by skills</a></li>
           <li role="presentation"><a href="#">Set my position</a></li>
         </ul>
-        <div className="row">
+        <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
           {this.renderForm()}
           <div className="col-md-9 devMap">
             {this.renderBubble()}
-            <img src={imgSrc} onClick={e => this.handleClick(e)} alt="test" />
+            <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
           </div>
         </div>
         
