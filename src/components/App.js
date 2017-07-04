@@ -6,6 +6,7 @@ import './main.css';
 import imgSrc from '../static/media/dev_map.png';
 
 import Rating from 'react-rating';
+import Speciality from './Speciality'
 
 function getQueryString (name, specialty) {
   if (name) return `?name=${name.toLowerCase()}`;
@@ -211,6 +212,7 @@ class App extends Component {
   // <li role="presentation" onClick={this.changePage.bind(this, 'skills')}><a href="#">Search by skills</a></li>
 
   render() {
+    const page = this.state.page;
     return (
       <div>
         <ul className="nav nav-tabs">
@@ -220,20 +222,26 @@ class App extends Component {
           <li role="presentation" onClick={this.changePage.bind(this, 'set')}
             className={this.state.page === 'set' && 'active'}
           ><a href="#">Set my location</a></li>
+          <li role="presentation" onClick={this.changePage.bind(this, 'skills')}
+            className={this.state.page === 'skills' && 'active'}
+          ><a href="#">Search Speciality</a></li>
         </ul>
         <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
           <div className="col-md-3">
             <div className="row">
-              {this.renderForm()}
+              {(page === 'search' || page === 'set') && this.renderForm()}
             </div>
             <div className="row">
-              {this.renderRating()}
+              {(page === 'search' || page === 'set') && this.renderRating()}
             </div>
           </div>
-          <div className="col-md-9 devMap">
+          {(page === 'search' || page === 'set') && <div className="col-md-9 devMap">
             {this.renderBubble()}
-            <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
-          </div>
+              <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
+          </div>}
+          {page === 'skills' && <div className="col-md-3">
+            <Speciality />
+          </div>}
         </div>
 
       </div>
