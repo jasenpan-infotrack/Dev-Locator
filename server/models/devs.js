@@ -47,16 +47,18 @@ Dev.updateSpecialtyByName = function (name, specialty, callback)
 {
     Dev.findOne({ "name": name }, function(error, result) {
       if(error) throw error;
+      if(!result) return callback({ description: "notfound"});
 
-      if(result['specialty'].find(spe => specialty.name))
+      var found = result['specialty'].find(spe => specialty.name === spe.name)
+      if(found)
       {
-        result['specialty'].find(spe => specialty.name).rating = specialty.rating;
+        found.rating = specialty.rating;
       }
       else
       {
         result.specialty.push(specialty);
       }
-      result.save( (result)=> callback(result));
+      result.save((result)=> callback({ description: "updated"}));
     });
 };
 
