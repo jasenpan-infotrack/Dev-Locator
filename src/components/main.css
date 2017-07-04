@@ -55,10 +55,40 @@ left: 26px;
 
 .devMap
 {
-  margin-top: 20px
+  border-left: solid 5px #0696b7;
+  margin-left: 20px;
+  height: 100vh
 }
+
 
 .ratingStar
 {
   color: orange
+}
+
+.nav.nav-tabs{
+  background-color:#0696b7;
+}
+
+.nav.nav-tabs li.active a{
+  color:black
+}
+
+.nav.nav-tabs li.false a{
+  color:white
+}
+
+.col-md-3{
+  padding-top:20px;
+}
+
+.col-md-8{
+  padding-top:50px;
+}
+
+@media screen and (max-width: 1024px) {
+    .col-md-8{
+     border:none;
+     margin-left: 0;
+    }   
 }

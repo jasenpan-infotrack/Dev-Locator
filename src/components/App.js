@@ -214,7 +214,7 @@ class App extends Component {
   render() {
     const page = this.state.page;
     return (
-      <div>
+      <div >
         <ul className="nav nav-tabs">
           <li role="presentation" onClick={this.changePage.bind(this, 'search')}
             className={this.state.page === 'search' && 'active'}
@@ -226,16 +226,16 @@ class App extends Component {
             className={this.state.page === 'skills' && 'active'}
           ><a href="#">Search Speciality</a></li>
         </ul>
-        <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
+        <div className="row container-fluid" style={{ marginLeft: 0, marginRight: 0 }}>
           <div className="col-md-3">
             <div className="row">
               {(page === 'search' || page === 'set') && this.renderForm()}
             </div>
-            <div className="row">
+            <div className="row" style={{marginTop:"20px"}}>
               {(page === 'search' || page === 'set') && this.renderRating()}
             </div>
           </div>
-          {(page === 'search' || page === 'set') && <div className="col-md-9 devMap">
+          {(page === 'search' || page === 'set') && <div className="col-md-8 devMap">
             {this.renderBubble()}
               <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
           </div>}
