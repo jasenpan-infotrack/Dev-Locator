@@ -4,8 +4,7 @@ mongoose.Promise = global.Promise;
 
 var devSchema = Schema({
     name: String,
-    team: [],
-    specialty: [],
+    specialty: [{ name: String, rating: Number }],
     x: Number,
     y: Number
 });
@@ -38,9 +37,26 @@ Dev.getDevById = function (_id, callback) {
 }
 
 Dev.getDevByName = function (name, callback) {
-    Dev.find({ "name": name }, function(error, result) {
+    Dev.find({ "name": { "$regex": name, "$options": "i" }}, function(error, result) {
       if(error) throw error;
       callback(result);
+    });
+};
+
+Dev.updateSpecialtyByName = function (name, specialty, callback)
+{
+    Dev.findOne({ "name": name }, function(error, result) {
+      if(error) throw error;
+
+      if(result['specialty'].find(spe => specialty.name))
+      {
+        result['specialty'].find(spe => specialty.name).rating = specialty.rating;
+      }
+      else
+      {
+        result.specialty.push(specialty);
+      }
+      result.save( (result)=> callback(result));
     });
 };
 
@@ -51,11 +67,15 @@ Dev.updateDev = function (dev, callback) {
     });
 };
 
-Dev.getDevBySpecialty = function (specialty, callback) {
-  Dev.find({'specialty': specialty}).exec(function(error, devs){
-    if(error) throw error;
-    return callback(devs);
-  });
+Dev.getDevBySpecialty = function (specialtyName, callback) {
+    Dev.aggregate([ 
+        { $match : {'specialty.name': specialtyName} }
+    ]).exec(function(error, devs){
+        if(error) throw error;
+        return callback(devs.sort((devA, devB) => {
+            return devA['specialty'].find(spe => spe.name === specialtyName)['rating'] < devB['specialty'].find(spe => spe.name === specialtyName)['rating'];
+        }));
+    });
 };
 
 module.exports = Dev;

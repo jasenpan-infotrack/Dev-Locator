@@ -11,6 +11,14 @@ router.get("/foo", function(req, res){
     res.send("Foo");
 });
 
+router.post("/dev/specialty", function(req, res){
+    const name = req.body.name;
+    const specialty = req.body.specialty;
+    Dev.updateSpecialtyByName(name, specialty, (result) => {
+        res.send(result);
+    });
+});
+
 router.get("/dev/:_id", (req, res) => {
     const _id = req.params._id;
     Dev.getDevById(_id, result => {

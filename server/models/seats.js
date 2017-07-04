@@ -1,13 +1,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 
 var seatSchema = Schema({
-    index: number,
-    top: number,
-    left: number,
-    width: number,
-    height: number
+    index: Number,
+    top: Number,
+    left: Number,
+    width: Number,
+    height: Number
 });
 
 var Seat = mongoose.model('Seat', seatSchema);
