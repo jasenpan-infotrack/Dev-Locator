@@ -6,6 +6,7 @@ import './main.css';
 import imgSrc from '../static/media/dev_map.png';
 
 import Rating from 'react-rating';
+import Speciality from './Speciality'
 
 function getQueryString (name, specialty) {
   if (name) return `?name=${name.toLowerCase()}`;
@@ -73,8 +74,8 @@ class App extends Component {
     PosX = PosX - ImgPos[0];
     PosY = PosY - ImgPos[1];
     this.setState({
-      bubblePositionX: PosX - 25,
-      bubblePositionY: PosY - 90
+      bubblePositionX: PosX - 23,
+      bubblePositionY: PosY - 95
     });
   }
 
@@ -82,6 +83,7 @@ class App extends Component {
     this.setState({
       page: newPage,
       searchResult: null,
+      notFound: false,
       name: '',
       specialty: ''
     });
@@ -97,16 +99,18 @@ class App extends Component {
           const len = res.data.length;
           if (len === 0) { // 0 result
             return this.setState({
-              notFound: true
+              notFound: true,
+              searchResult: null,
+              bubblePositionX: 0,
+              bubblePositionY: 0
             });
-          } else if (len === 1) { // single result
+          } else {
             this.setState({
               searchResult: res.data,
-              bubblePositionX: res.data[0].x,
-              bubblePositionY: res.data[0].y
+              notFound: false,
+              bubblePositionX: 0,
+              bubblePositionY: 0
             });
-          }else { // multiple results
-            throw "Not Implemented";
           }
 
       });
@@ -126,7 +130,8 @@ class App extends Component {
   changeName(e) {
     this.setState({
       name: e.target.value,
-      searchResult: null
+      searchResult: null,
+      notFound: false
     });
   }
 
@@ -153,6 +158,7 @@ class App extends Component {
             placeholder="Name" name="devname"
           />
         </div>
+        {this.state.notFound && <div>Not found</div>}
         <div className="form-group">
           <label htmlFor="devspecialty">Specialty</label>
           <input type="text" className="form-control"
@@ -179,15 +185,26 @@ class App extends Component {
   renderBubble() {
     const x = this.state.bubblePositionX;
     const y = this.state.bubblePositionY;
-    if (this.state.page === 'set' || this.state.searchResult !== null) {
+    if (this.state.page === 'set') {
       return (
       <div className="bubbleContainer" style={{ left: x, top: y }}>
         <div className="bubble">
           <div className="text-center" style={{marginTop:"10px", fontSize: "1.5em"}}>
-            {this.state.searchResult ? `${this.state.searchResult[0].name} is here!` : null}
+            {'I am here!'}
           </div>
         </div>
       </div>);
+    }
+    if (this.state.page === 'search' && this.state.searchResult && this.state.searchResult.length > 0) {
+      return this.state.searchResult.map(d =>
+        <div className="bubbleContainer" style={{ left: d.x, top: d.y }}>
+          <div className="bubble">
+            <div className="text-center" style={{marginTop:"10px", fontSize: "1.5em"}}>
+              {d.name + ' is here!'}
+            </div>
+          </div>
+        </div>
+      );
     }
     return null;
   }
@@ -195,6 +212,7 @@ class App extends Component {
   // <li role="presentation" onClick={this.changePage.bind(this, 'skills')}><a href="#">Search by skills</a></li>
 
   render() {
+    const page = this.state.page;
     return (
       <div>
         <ul className="nav nav-tabs">
@@ -204,20 +222,26 @@ class App extends Component {
           <li role="presentation" onClick={this.changePage.bind(this, 'set')}
             className={this.state.page === 'set' && 'active'}
           ><a href="#">Set my location</a></li>
+          <li role="presentation" onClick={this.changePage.bind(this, 'skills')}
+            className={this.state.page === 'skills' && 'active'}
+          ><a href="#">Search Speciality</a></li>
         </ul>
         <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
           <div className="col-md-3">
             <div className="row">
-              {this.renderForm()}
+              {(page === 'search' || page === 'set') && this.renderForm()}
             </div>
             <div className="row">
-              {this.renderRating()}
+              {(page === 'search' || page === 'set') && this.renderRating()}
             </div>
           </div>
-          <div className="col-md-9 devMap">
+          {(page === 'search' || page === 'set') && <div className="col-md-9 devMap">
             {this.renderBubble()}
-            <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
-          </div>
+              <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
+          </div>}
+          {page === 'skills' && <div className="col-md-3">
+            <Speciality />
+          </div>}
         </div>
 
       </div>
