@@ -6,13 +6,8 @@ import './main.css';
 import imgSrc from '../static/media/dev_map.png';
 
 import Rating from 'react-rating';
-import Speciality from './Speciality'
-
-function getQueryString (name, specialty) {
-  if (name) return `?name=${name.toLowerCase()}`;
-  if (specialty) return `?specialty=${specialty.toLowerCase()}`;
-  return '';
-}
+import Specialty from './Specialty'
+import { getQueryString } from '../utils';
 
 function FindPosition(oElement)
 {
@@ -239,9 +234,7 @@ class App extends Component {
             {this.renderBubble()}
               <img src={imgSrc} onClick={e => this.handleClick(e)} alt="map" />
           </div>}
-          {page === 'skills' && <div className="col-md-3">
-            <Speciality />
-          </div>}
+          {page === 'skills' && <Specialty />}
         </div>
 
       </div>
